@@ -1,17 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace LB4FH.GpxReverser
 {
     class GpxTrack
     {
+        /// <summary>
+        /// Display name
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// List of points on this track
+        /// </summary>
         public List<TrackPoint> points = new List<TrackPoint>();
 
+        /// <summary>
+        /// Outputs the tracks to a new GPX file
+        /// </summary>
+        /// <param name="fileName">File name to output to</param>
         internal void Save(string fileName)
         {
             XmlDocument doc = new XmlDocument();
@@ -31,6 +39,7 @@ namespace LB4FH.GpxReverser
             trkName.InnerText = DateTime.Now.ToString();
             trk.AppendChild(trkName);
 
+            // For simplicity all points are added to a single track segment
             XmlElement trkSeg = doc.CreateElement("trkseg");
             trk.AppendChild(trkSeg);
 
@@ -45,6 +54,8 @@ namespace LB4FH.GpxReverser
                 ele.InnerText = points[i].ele;
                 trkpt.AppendChild(ele);
 
+                // Point times are not reversed. This gives a rough estimate of progress for human movement speed, as most logging software makes tracks
+                // based on time. It is not an accurate method. Another option would be to interpolate time or generate a fresh time series. 
                 XmlElement time = doc.CreateElement("time");
                 time.InnerText = points[points.Count - i].time.ToString();
                 trkpt.AppendChild(time);
